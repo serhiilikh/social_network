@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    # IRL there won't be any local db, so I use easiest way to initialize it. otherwise all creds should be stored elsewhere
+    environment:
+      - POSTGRES_DB=pg
+      - POSTGRES_USER=pg
+      - POSTGRES_PASSWORD=pg
+  web:
+    build: .
+    # entrypoint and database connection detection could be used in production
+    command: bash -c "sleep 10 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file:
+      - .example.env
